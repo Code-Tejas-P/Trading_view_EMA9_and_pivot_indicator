@@ -19,12 +19,10 @@ s1 = (2 * pivot) - pivot_high
 s2 = pivot - daily_range
 s3 = pivot_low - 2 * (pivot_high - pivot)
 
-
 // Resistance Levels
 r1 = (2 * pivot) - pivot_low
 r2 = pivot + daily_range
 r3 = pivot_high + 2 * (pivot - pivot_low)
-
 
 // —————— Plot Pivot Lines (Only Lines, No Labels) ——————
 plot(pivot, "Pivot", color=color.yellow, linewidth=1)
@@ -34,3 +32,18 @@ plot(s3, "S3", color=color.red, linewidth=1)
 plot(r1, "R1", color=color.green, linewidth=1)
 plot(r2, "R2", color=color.green, linewidth=1)
 plot(r3, "R3", color=color.green, linewidth=1)
+
+// —————— Alert Conditions ——————
+candle_above_ema = close > ema9
+candle_below_ema = close < ema9
+
+candle_between_levels = (low > s3 and high < s2) or (low > s2 and high < s1) or (low > s1 and high < pivot) or 
+                         (low > pivot and high < r1) or (low > r1 and high < r2) or (low > r2 and high < r3)
+
+time_stamp = timenow
+
+if (candle_above_ema and candle_between_levels)
+    alert("Candle is above EMA9 and not touching pivot points. Time: " + str.tostring(time_stamp) + " | Close Price: " + str.tostring(close), alert.freq_once_per_bar_close)
+
+if (candle_below_ema and candle_between_levels)
+    alert("Candle is below EMA9 and not touching pivot points. Time: " + str.tostring(time_stamp) + " | Close Price: " + str.tostring(close), alert.freq_once_per_bar_close)
