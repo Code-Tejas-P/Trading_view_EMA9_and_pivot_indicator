@@ -1,0 +1,36 @@
+//@version=6
+indicator("EMA9 + Extended Pivot Lines", overlay=true)
+
+// Calculate EMA 9
+ema9 = ta.ema(close, 9)
+plot(ema9, "EMA 9", color=color.blue, linewidth=2)
+
+// —————— Daily Pivot Points (Extended) ——————
+pivot_high = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
+pivot_low = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
+pivot_close = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
+
+// Calculate Pivot Levels
+pivot = (pivot_high + pivot_low + pivot_close) / 3
+daily_range = pivot_high - pivot_low
+
+// Support Levels
+s1 = (2 * pivot) - pivot_high
+s2 = pivot - daily_range
+s3 = pivot_low - 2 * (pivot_high - pivot)
+
+
+// Resistance Levels
+r1 = (2 * pivot) - pivot_low
+r2 = pivot + daily_range
+r3 = pivot_high + 2 * (pivot - pivot_low)
+
+
+// —————— Plot Pivot Lines (Only Lines, No Labels) ——————
+plot(pivot, "Pivot", color=color.yellow, linewidth=1)
+plot(s1, "S1", color=color.red, linewidth=1)
+plot(s2, "S2", color=color.red, linewidth=1)
+plot(s3, "S3", color=color.red, linewidth=1)
+plot(r1, "R1", color=color.green, linewidth=1)
+plot(r2, "R2", color=color.green, linewidth=1)
+plot(r3, "R3", color=color.green, linewidth=1)
