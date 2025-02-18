@@ -1,11 +1,11 @@
 //@version=6
-indicator("EMA9 + Extended Pivot Lines", overlay=true)
+indicator("EMA9 + Extended Pivot Lines (Time Fixed)", overlay=true)
 
 // Calculate EMA 9
 ema9 = ta.ema(close, 9)
 plot(ema9, "EMA 9", color=color.blue, linewidth=2)
 
-// —————— Daily Pivot Points (Extended) ——————
+// —————— Daily Pivot Points ——————
 pivot_high = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
 pivot_low = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
 pivot_close = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
@@ -24,7 +24,7 @@ r1 = (2 * pivot) - pivot_low
 r2 = pivot + daily_range
 r3 = pivot_high + 2 * (pivot - pivot_low)
 
-// —————— Plot Pivot Lines (Only Lines, No Labels) ——————
+// —————— Plot Pivot Lines ——————
 plot(pivot, "Pivot", color=color.yellow, linewidth=1)
 plot(s1, "S1", color=color.red, linewidth=1)
 plot(s2, "S2", color=color.red, linewidth=1)
@@ -33,17 +33,21 @@ plot(r1, "R1", color=color.green, linewidth=1)
 plot(r2, "R2", color=color.green, linewidth=1)
 plot(r3, "R3", color=color.green, linewidth=1)
 
-// —————— Alert Conditions ——————
-candle_above_ema = close > ema9
-candle_below_ema = close < ema9
+// —————— Alert Conditions (Fixed Time Format) ——————
+is_bullish = close > open and close > ema9 and low > ema9
+is_bearish = close < open and close < ema9 and high < ema9
 
-candle_between_levels = (low > s3 and high < s2) or (low > s2 and high < s1) or (low > s1 and high < pivot) or 
-                         (low > pivot and high < r1) or (low > r1 and high < r2) or (low > r2 and high < r3)
+candle_between_levels = 
+  (low > s3 and high < s2) or 
+  (low > s2 and high < s1) or 
+  (low > s1 and high < pivot) or 
+  (low > pivot and high < r1) or 
+  (low > r1 and high < r2) or 
+  (low > r2 and high < r3)
 
-time_stamp = timenow
+// Corrected timestamp formatting with str.tostring()
+if (is_bullish and candle_between_levels)
+    alert("Bullish: Candle UP, above EMA9, between pivots Close: " + str.tostring(close), alert.freq_once_per_bar_close)
 
-if (candle_above_ema and candle_between_levels)
-    alert("Candle is above EMA9 and not touching pivot points. Time: " + str.tostring(time_stamp) + " | Close Price: " + str.tostring(close), alert.freq_once_per_bar_close)
-
-if (candle_below_ema and candle_between_levels)
-    alert("Candle is below EMA9 and not touching pivot points. Time: " + str.tostring(time_stamp) + " | Close Price: " + str.tostring(close), alert.freq_once_per_bar_close)
+if (is_bearish and candle_between_levels)
+    alert("Bearish: Candle DOWN, below EMA9, between pivots.  | Close: " + str.tostring(close), alert.freq_once_per_bar_close)
