@@ -33,7 +33,7 @@ plot(r1, "R1", color=color.green, linewidth=1)
 plot(r2, "R2", color=color.green, linewidth=1)
 plot(r3, "R3", color=color.green, linewidth=1)
 
-// —————— Alert Conditions (Fixed Time Format) ——————
+// —————— Alert Conditions (Fixed Time Format) ——————fghjklxfcghjkfsfdgfhgjhkfdgfhgjhkjl;
 is_bullish = close > open and close > ema9 and low > ema9
 is_bearish = close < open and close < ema9 and high < ema9
 
