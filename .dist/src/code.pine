@@ -51,3 +51,4 @@ if (is_bullish and candle_between_levels)
 
 if (is_bearish and candle_between_levels)
     alert("Bearish: Candle DOWN, below EMA9, between pivots.  | Close: " + str.tostring(close), alert.freq_once_per_bar_close)
+//hii this tejas //
